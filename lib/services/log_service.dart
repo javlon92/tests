@@ -6,6 +6,7 @@ class Log {
   const Log._();
   static final Logger _logger = Logger(
     printer: PrettyPrinter(),
+    filter: DevelopmentFilter(),
   );
 
   static void d(String message) {

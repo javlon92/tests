@@ -63,6 +63,7 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: TextField(
+                  key: const Key("search_text"),
                   textInputAction: TextInputAction.search,
                   onSubmitted:(text) {
                       search.apiUnSplashSearch(text);
