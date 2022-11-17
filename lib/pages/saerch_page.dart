@@ -116,12 +116,16 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
               Navigator.of(context).push(MaterialPageRoute (builder: (BuildContext context) => DetailPage(unsplash:search.listSplash[index]),
               ),);
             },
-            child: CachedNetworkImage(
-              imageUrl: search.listSplash[index].urls!.regular!,
-              placeholder: (context, url) => AspectRatio(
-                  aspectRatio: search.listSplash[index].width!/search.listSplash[index].height!,
-                  child: ColoredBox(color: Color(int.parse(search.listSplash[index].color!.replaceFirst("#", "0xFF"))),)),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+            child: Hero(
+              transitionOnUserGestures: true,
+              tag: search.listSplash[index],
+              child: CachedNetworkImage(
+                imageUrl: search.listSplash[index].urls!.regular!,
+                placeholder: (context, url) => AspectRatio(
+                    aspectRatio: search.listSplash[index].width!/search.listSplash[index].height!,
+                    child: ColoredBox(color: Color(int.parse(search.listSplash[index].color!.replaceFirst("#", "0xFF"))),)),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
         ),
