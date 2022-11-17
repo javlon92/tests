@@ -32,9 +32,9 @@ class _DetailPageState extends State<DetailPage> with AutomaticKeepAliveClientMi
       provider.apiUnSplashSearch(searching);
 
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels.toInt()-50 == _scrollController.position.maxScrollExtent.toInt()) {
-        if(provider.listSplash.length<=470){
-          provider.loadMoreData = true;
+      if (_scrollController.position.pixels.toInt() >= _scrollController.position.maxScrollExtent.toInt()-50) {
+        if(provider.listSplash.length<=470 && !provider.loadMoreData){
+          provider.changeLoadMoreData = true;
           await provider.apiUnSplashSearch(provider.searching);
         }
       }
@@ -149,6 +149,15 @@ class _DetailPageState extends State<DetailPage> with AutomaticKeepAliveClientMi
                     shape: const CircleBorder(),
                     backgroundColor: Colors.black.withOpacity(0.1),
                   ),),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Visibility(
+                      visible: detail.loadMoreData,
+                      child: LinearProgressIndicator(
+                        backgroundColor: Colors.grey.shade100,
+                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                      )),
+                )
               ],
             ),
           );

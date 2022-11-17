@@ -8,7 +8,7 @@ class DetailProvider extends ChangeNotifier{
   List<Unsplash> oldListSplash = [];
   String searching = "For you";
   int page = 1;
-  bool loadMoreData = true;
+  bool loadMoreData = false;
 
   set changeLoadMoreData(bool loadMoreData) {
     this.loadMoreData = loadMoreData;
@@ -21,6 +21,10 @@ class DetailProvider extends ChangeNotifier{
       listSplash.clear();
       searching = search;
       page = 1;
+    }
+    if(listSplash.isNotEmpty) {
+      loadMoreData = true;
+      notifyListeners();
     }
 
     await Network.GET(Network.API_SEARCH, Network.paramsSearch(search, page++)).then((response) {

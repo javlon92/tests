@@ -28,8 +28,9 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
 
     provider.apiUnSplashSearch(provider.searching);
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels.toInt()-50 == _scrollController.position.maxScrollExtent.toInt()) {
-        if(provider.listSplash.length<=470){
+      if (_scrollController.position.pixels.toInt() >= _scrollController.position.maxScrollExtent.toInt()-50) {
+        if(provider.listSplash.length<=470 && !provider.loadMoreData){
+          provider.changeLoadMoreData = true;
          await  provider.apiUnSplashSearch(provider.searching);
         }
       }
@@ -49,49 +50,59 @@ class _SearchPageState extends State<SearchPage> with AutomaticKeepAliveClientMi
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return SafeArea(
-      child: Consumer<SearchProvider>(
-        builder: (context,search,_) {
-          return Scaffold(
-            appBar: PreferredSize(
-              preferredSize: const Size(double.infinity,65),
-              child: Container(
-                margin: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 15,),
-                height: 65,
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: TextField(
-                  key: const Key("search_text"),
-                  textInputAction: TextInputAction.search,
-                  onSubmitted:(text) {
-                      search.apiUnSplashSearch(text);
-                  },
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search,color: Colors.black,),
-                    border: InputBorder.none,
-                    hintText: "Search",
-                    suffixIcon: Icon(Icons.camera_alt,color: Colors.black,)
-                  ),
+    return Consumer<SearchProvider>(
+      builder: (context,search,_) {
+        return Scaffold(
+          appBar: PreferredSize(
+            preferredSize: const Size(double.infinity,65),
+            child: Container(
+              margin: const EdgeInsets.only(left: 16, right: 16, bottom: 10, top: 15,),
+              height: 65,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: TextField(
+                key: const Key("search_text"),
+                textInputAction: TextInputAction.search,
+                onSubmitted:(text) {
+                    search.apiUnSplashSearch(text);
+                },
+                decoration: const InputDecoration(
+                  prefixIcon: Icon(Icons.search,color: Colors.black,),
+                  border: InputBorder.none,
+                  hintText: "Search",
+                  suffixIcon: Icon(Icons.camera_alt,color: Colors.black,)
                 ),
               ),
+            ),
 
-            ),
-            body: MasonryGridView.count(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              itemCount: search.listSplash.length,
-              crossAxisCount: 2,
-              mainAxisSpacing: 6,
-              crossAxisSpacing: 6,
-              itemBuilder: (context, index) {
-                return  buildBody(search,context, index);
-              },
-            ),
-          );
-        }
-      ),
+          ),
+          body: Column(
+            children: [
+              Expanded(
+                child: MasonryGridView.count(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  itemCount: search.listSplash.length,
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 6,
+                  crossAxisSpacing: 6,
+                  itemBuilder: (context, index) {
+                    return  buildBody(search,context, index);
+                  },
+                ),
+              ),
+              Visibility(
+                  visible: search.loadMoreData,
+                  child: LinearProgressIndicator(
+                    backgroundColor: Colors.grey.shade100,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.blue),
+                  )),
+            ],
+          ),
+        );
+      }
     );
   }
   Widget buildBody(SearchProvider search,BuildContext context, int index) {

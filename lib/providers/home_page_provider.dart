@@ -16,6 +16,10 @@ class HomePageProvider extends ChangeNotifier{
   double downloadPercent = 0;
   bool showDownloadIndicator = false, loadMoreData = false;
 
+  set changeLoadMoreData(bool loadMoreData){
+    this.loadMoreData = loadMoreData;
+    notifyListeners();
+  }
 
 
 
@@ -23,13 +27,12 @@ class HomePageProvider extends ChangeNotifier{
 
     if(searching != search) {
       searching = search; listSplash.clear(); page = 1;
-      notifyListeners();
     }
     if(listSplash.isNotEmpty) {
       loadMoreData = true;
       notifyListeners();
     }
-    await Network.GET(Network.API_SEARCH, Network.paramsSearch(search, page++)).then((response) {
+    await Network.GET(Network.API_SEARCH, Network.paramsSearch(searching, page++)).then((response) {
       if(response != null){
           listSplash.addAll(Network.parseUnSplashListSearch(response));
           loadMoreData = false;

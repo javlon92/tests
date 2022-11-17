@@ -33,10 +33,14 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin{
     super.initState();
     _scrollController = ScrollController();
 
-    provider.apiUnSplashSearch(provider.searching);
+    provider.apiUnSplashSearch("All");
     _scrollController.addListener(() async {
-      if (_scrollController.position.pixels.toInt()-50 == _scrollController.position.maxScrollExtent.toInt()) {
-        if(provider.listSplash.length <= 470) await provider.apiUnSplashSearch(provider.searching);
+      debugPrint("${_scrollController.position.pixels.toInt()} ${_scrollController.position.maxScrollExtent.toInt() - 50} HomePage");
+      if (_scrollController.position.pixels.toInt() >= _scrollController.position.maxScrollExtent.toInt()-50) {
+        if(provider.listSplash.length <= 470 && !provider.loadMoreData) {
+          provider.changeLoadMoreData = true;
+          await provider.apiUnSplashSearch(provider.searching);
+        }
       }
     });
   }
