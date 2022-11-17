@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:provider/provider.dart';
@@ -13,21 +13,28 @@ import 'package:tests/providers/search_provider.dart';
 void main(){
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  final homePr = HomePageProvider();
+  final searchPr = SearchProvider();
+
   testWidgets("Intro", (WidgetTester tester) async{
      await tester.pumpWidget(const MyApp());
-     // final searchPr = SearchProvider();
+
+     await homePr.apiUnSplashSearch("All");
+     await tester.pumpAndSettle();
+
      await Future.delayed(const Duration(seconds: 10));
      await tester.tap(find.byKey(const Key("category2")));
      await tester.pumpAndSettle();
 
      await Future.delayed(const Duration(seconds: 10));
      // await tester.tap(find.byType(BottomNavigationBar).at(2));
-     // await tester.pumpAndSettle();
-     //
-     // await Future.delayed(const Duration(seconds: 10));
+     await tester.tap(find.byIcon(CupertinoIcons.search));
+     await tester.pumpAndSettle();
 
-     // expect(searchPr.listSplash, isEmpty);
-     expect(find.byType(HomePage), findsOneWidget);
+     await Future.delayed(const Duration(seconds: 10));
+
+     expect(searchPr.listSplash, isEmpty);
+     // expect(find.byType(HomePage), findsOneWidget);
      expect(find.byType(MainPage), findsOneWidget);
 
   });
